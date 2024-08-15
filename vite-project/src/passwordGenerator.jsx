@@ -1,4 +1,4 @@
-import {useState, useCallback, useEffect} from "react";
+import {useState, useCallback, useEffect, useRef} from "react";
 
 function PasswordGenerator() {
   const [password, setPassword] = useState("");
@@ -21,6 +21,13 @@ function PasswordGenerator() {
     generator();
   }, [length, numberAllowed, characterAllowed, generator]);
 
+  const passwordRef = useRef(null);
+  const copyPassword = useCallback(() => {
+    passwordRef.current?.select();
+    passwordRef.current?.setSelectionRange(0, 100);
+    window.navigator.clipboard.writeText(password);
+  }, [password]);
+
   return (
     <div className="w-full max-w-md mx-auto shadow-lg rounded-lg px-6 py-4 my-8 bg-gray-800 text-white">
       <h1 className="text-center text-xl font-semibold mb-4">
@@ -32,8 +39,12 @@ function PasswordGenerator() {
           value={password}
           className="outline-none w-full py-2 px-3 text-gray-800 bg-gray-100 rounded-l-md"
           readOnly
+          ref={passwordRef}
         />
-        <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
+        <button
+          className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0"
+          onClick={copyPassword}
+        >
           copy
         </button>
       </div>
